@@ -1,18 +1,21 @@
 # NodeJS MQTT
 
-This is a simple API to read IOT Temperatures and send to a Mongo Database.
+Dies ist eine einfache API zum lesen von IOT temperaturen 
+und zum senden an eine mongo datenbank
 
-Later I'll add some routes to do some stuff on the IOT through a RN App.
+Spater werde ich einige routen hinzufugen, um einige dinge auf dem IOT uber eine 
+React Native App zu erledigen.
 
-The Iot stuff is already functional and communicating. Later I'll provide the C++ code.
+Das IOT zeug ist bereits funktionsfahig und kommuniziert. 
+Spater werde ich den C++ code bereitstellen. 
 
 
-### Halt
+### Halt!
 
-The MQTT library only works with _npm install_
+Die MQTT bibliothek funktioniert nur mit _npm install_
 
 ### Steps 
 
-Run to install related libs _npm i_
+Ausfuhren um zeugehoride biliotheken zu installieren  _npm i_
 
-To compile you can use _npm start-server_ 
+Zum Kompilieren verwenden _npm start-server_ 

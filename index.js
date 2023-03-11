@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 
 import { connectToIot } from "./controllers/IotConnectionController.js";
+import { subscribeToTemperature, readTemperatures } from "./controllers/IotTempsControllers.js";
 
 const app = express();
 
@@ -13,4 +14,5 @@ const corsOptions = {
 }
 
 connectToIot();
-
+subscribeToTemperature('device/temp');
+readTemperatures();
