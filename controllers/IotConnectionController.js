@@ -1,7 +1,7 @@
 import mqtt from 'mqtt';
 import { blink } from "../helpers/Blinking.js";
 
-// later swap this to .dotenv
+// spater tauschen sie diese gegen aus .dotenv
 export const alleSysIotClient = mqtt.connect('mqtt://91.121.93.94', {});
 
 export const connectToIot = () => {
