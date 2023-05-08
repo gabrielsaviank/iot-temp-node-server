@@ -10,16 +10,12 @@ const char* mqtt_server = "91.121.93.94";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-unsigned long lastMsg = 0;
-#define MSG_BUFFER_SIZE  (50)
-char msg[MSG_BUFFER_SIZE];
-int value = 0;
+
 
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
 
 void setup_wifi() {
-
   delay(10);
   Serial.println();
   Serial.print("Connecting to ");
@@ -65,17 +61,15 @@ void reconnect() {
     Serial.print("AlleSys - Attempting MQTT connection...");
     String clientId = "AllesysTemQttClient";
     clientId += String(random(0xffff), HEX);
-    // Attempt to connect
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
      
-      client.publish("device/temp", "MQTT Server is Connected");
       client.subscribe("device/led");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println("AlleSys - try again in 5 seconds");
-      // Wait 5 seconds before retrying
+
       delay(5000);
     }
   }
@@ -89,7 +83,6 @@ void setup() {
 
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-    
 }
 
 void loop() {
@@ -99,20 +92,14 @@ void loop() {
 
   sensors.requestTemperatures(); 
   float temperatureC = sensors.getTempCByIndex(0);
-  char tempStr[10];
-  dtostrf(temperatureC, 6, 2, tempStr); 
-//  Serial.print(temperatureC);
-//  Serial.println("ºC");
-  delay(5000);
 
-  unsigned long now = millis();
-  if (now - lastMsg > 600) {
-    lastMsg = now;
-    ++value;
-    snprintf (msg, MSG_BUFFER_SIZE, "Temperature is #%ld", tempStr);
-    Serial.print("Publish message: ");
+  if(!isnan(temperatureC)){
+    char tempStr[10];
+    dtostrf(temperatureC, 6, 2, tempStr);
     Serial.println(tempStr);
-    client.publish("device/temp", tempStr);
+    client.publish("temp", tempStr);
   }
+  
+  delay(5000);
   client.loop();
 }
