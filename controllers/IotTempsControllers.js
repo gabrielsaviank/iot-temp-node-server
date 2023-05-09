@@ -9,14 +9,12 @@ export const subscribeToTemperature = (topic) => {
     try{
         alleSysIotClient.subscribe(topic);
         blink(1)
+        alleSysIotClient.on('message', (topic, message, packet) => {
+            const payload = String.fromCharCode.apply(null, packet.payload);
+            console.log(payload)
+        })
     }catch (error) {
         console.log(`Thema kann nicht abonniert werden ${topic}` + error);
         blink(0)
     }
 };
-
-export const readTemperatures = () => {
-    alleSysIotClient.on('device/temp', (topic, message, packet) => {
-        return console.log("here")
-    });
-}
