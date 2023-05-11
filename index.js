@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
-import { connectToIot } from "./controllers/IotConnectionController.js";
-import { subscribeToTemperature } from "./controllers/IotTempsControllers.js";
+import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
+import { readIotTemperature } from "./controllers/read-iot-temperature.js";
 
 const app = express();
 
@@ -11,7 +11,7 @@ const corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true, // access-control-allow-credentials:true
     optionSuccessStatus: 200
-}
+};
 
-connectToIot();
-subscribeToTemperature('temp');
+connectAndSubscribeToIot('temp')
+    .then(() => readIotTemperature());
