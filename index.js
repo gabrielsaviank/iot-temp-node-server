@@ -17,7 +17,6 @@ const corsOptions = {
 
 config();
 
-const uri = `mongodb+srv://${API_USER}:${API_KEY}@cluster0.qkrqako.mongodb.net/?retryWrites=true&w=majority`;
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -26,7 +25,7 @@ app.use(bodyParser.json());
 
 const startServer = async () => {
     try {
-        await mongoose.connect(uri, {
+        await mongoose.connect(process.env.DB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
