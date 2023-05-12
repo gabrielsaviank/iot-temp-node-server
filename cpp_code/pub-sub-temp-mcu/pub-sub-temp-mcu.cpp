@@ -1,3 +1,7 @@
+/* 
+  Mqtt Temperature 
+  Gabriel Savian Zardo
+*/
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <OneWire.h>
@@ -10,7 +14,9 @@ const char* mqtt_server = "91.121.93.94";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-
+unsigned long lastMsg = 0;
+#define MSG_BUFFER_SIZE  (50)
+char msg[MSG_BUFFER_SIZE];
 
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
@@ -48,8 +54,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   // This is to test MQTT stuff to see if its working must message from the client
   if ((char)payload[0] == '1') {
-    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-    // but actually the LED is on; this is because
+    digitalWrite(BUILTIN_LED, LOW);
   } else {
     digitalWrite(BUILTIN_LED, HIGH);
   }
@@ -59,10 +64,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("AlleSys - Attempting MQTT connection...");
-    String clientId = "AllesysTemQttClient";
+    String clientId = "AllesysMqttClient";
     clientId += String(random(0xffff), HEX);
     if (client.connect(clientId.c_str())) {
-      Serial.println("connected");
+      Serial.println("AlleSys - connected");
      
       client.subscribe("device/led");
     } else {
@@ -92,6 +97,7 @@ void loop() {
 
   sensors.requestTemperatures(); 
   float temperatureC = sensors.getTempCByIndex(0);
+  
 
   if(!isnan(temperatureC)){
     char tempStr[10];
@@ -99,7 +105,7 @@ void loop() {
     Serial.println(tempStr);
     client.publish("temp", tempStr);
   }
-  
-  delay(5000);
+
+  delay(60000);
   client.loop();
 }

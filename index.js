@@ -1,17 +1,45 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { config } from "dotenv";
 
-import { connectToIot } from "./controllers/IotConnectionController.js";
-import { subscribeToTemperature } from "./controllers/IotTempsControllers.js";
+import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
+import { readIotTemperature } from "./controllers/read-iot-temperature.js";
 
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: "http://localhost:3000",
     credentials: true, // access-control-allow-credentials:true
     optionSuccessStatus: 200
-}
+};
 
-connectToIot();
-subscribeToTemperature('temp');
+config();
+
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+
+// Declare routes here
+
+const startServer = async () => {
+    try {
+        await mongoose.connect(process.env.DB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        await connectAndSubscribeToIot("temp");
+        readIotTemperature();
+
+        app.listen(5000, () => {
+            console.log("AlleSys: Fetch - DB Connected and Listening on Port 5000");
+        });
+    } catch (e) {
+        console.log("AlleSys: Error - Couldnt connect to the DB");
+    }
+};
+
+// This is just for Intellij stop annoying me because of the promise;
+startServer().then(() => {});
+
