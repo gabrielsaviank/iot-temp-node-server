@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { config } from "dotenv";
 
+import { dayRoutes } from "./routes/day-routes.js";
+import { temperatureRoutes } from "./routes/temperature-routes.js";
 import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
 import { readIotTemperature } from "./controllers/read-iot-temperature.js";
 
@@ -17,11 +19,11 @@ const corsOptions = {
 
 config();
 
-
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-// Declare routes here
+app.use("/days", dayRoutes);
+app.use("/temperatures",temperatureRoutes);
 
 const startServer = async () => {
     try {

@@ -13,14 +13,14 @@ export const readIotTemperature = () => {
                 console.log(payload);
 
                 // CHANGE ME, This will be a job that will run daily;
-                try {
-                    const temperature = new Temperature({
-                        temperature: payload
-                    });
-                    await temperature.save();
-                } catch (error) {
-                    console.log(`Error ${error}`);
-                }
+                // try {
+                //     const temperature = new Temperature({
+                //         temperature: payload
+                //     });
+                //     await temperature.save();
+                // } catch (error) {
+                //     console.log(`Error ${error}`);
+                // }
             });
         }, 5000);
     }catch (error) {
@@ -28,12 +28,3 @@ export const readIotTemperature = () => {
         blink(0);
     }
 };
-
-// const obj = {
-//   day: {
-//       created: "11/05",
-//       temperatures: [
-//           { temp: "20.00", hour: "15:50" }
-//       ]
-//   }
-// };
