@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 
 const temperatureSchema = new Schema({
+    day: { type: mongoose.Types.ObjectId, required: true, ref: "Day" },
     measure: { type: String, required: true },
     time: {
         type: String,
@@ -12,7 +13,6 @@ const temperatureSchema = new Schema({
         },
         required: false
     },
-    day: { type: mongoose.Types.ObjectId, required: true, ref: "Day" }
 });
 
 export const Temperature = model("Temperature", temperatureSchema);

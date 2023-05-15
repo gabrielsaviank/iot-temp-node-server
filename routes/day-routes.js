@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import { createDay } from "../controllers/days-controller.js";
+import { createDay, getDay } from "../controllers/days-controller.js";
 
 const router = Router();
 
+router.get("/:id", getDay);
 router.post("/", createDay);
 
 export const dayRoutes = router;

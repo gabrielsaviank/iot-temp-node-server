@@ -10,6 +10,8 @@ export const readIotTemperature = () => {
         setTimeout(() => {
             alleSysIotClient.on("message", async(topic, message, packet) => {
                 const payload = String.fromCharCode.apply(null, packet.payload);
+                // here we must find a way to get the day ID,
+                // and then post the measure using the day
                 console.log(payload);
 
                 // CHANGE ME, This will be a job that will run daily;
