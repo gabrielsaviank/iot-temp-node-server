@@ -18,12 +18,11 @@ export const createDay = async(req, res, next) => {
     }
 };
 
-export const getDay = async(req, res, next) => {
+export const getDay = async(req, res) => {
     const dayId = req.params.id;
 
     try {
         const selectedDay= await Day.find({ _id: dayId });
-        console.log(typeof selectedDay[0].temperatures[0]);
         res.send(selectedDay);
     } catch (error) {
         console.log(error);
