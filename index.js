@@ -7,7 +7,7 @@ import { config } from "dotenv";
 import { dayRoutes } from "./routes/day-routes.js";
 import { temperatureRoutes } from "./routes/temperature-routes.js";
 import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
-import { readIotTemperature } from "./controllers/read-iot-temperature.js";
+import { readWriteIotTemperature } from "./controllers/read-write-iot-temperature.js";
 
 const app = express();
 
@@ -17,7 +17,7 @@ const corsOptions = {
     optionSuccessStatus: 200
 };
 
-config();
+config({ path: "./vars/.env" });
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -32,7 +32,7 @@ const startServer = async () => {
             useUnifiedTopology: true,
         });
         await connectAndSubscribeToIot("temp");
-        readIotTemperature();
+        readWriteIotTemperature();
 
         app.listen(5000, () => {
             console.log("AlleSys: Fetch - DB Connected and Listening on Port 5000");
