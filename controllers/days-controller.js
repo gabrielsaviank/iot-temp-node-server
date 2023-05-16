@@ -11,6 +11,7 @@ export const createDay = async(req, res, next) => {
 
         await day.save();
         res.send(day);
+
         next();
     } catch (error) {
         return console.log(error);
@@ -22,7 +23,7 @@ export const getDay = async(req, res, next) => {
 
     try {
         const selectedDay= await Day.find({ _id: dayId });
-        console.log(selectedDay[0].temperatures);
+        console.log(typeof selectedDay[0].temperatures[0]);
         res.send(selectedDay);
     } catch (error) {
         console.log(error);

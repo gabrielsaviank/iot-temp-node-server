@@ -1,32 +1,33 @@
 import mongoose from "mongoose";
+import dayjs from "dayjs";
+
 import { Temperature } from "../models/Temperature.js";
 import { Day } from "../models/Day.js";
 
 // This is for testing purposes
-export const createMeasure = async (req, res, next) => {
-  const { measure, day } = req.body;
-
-  const TempToRegister = new Temperature({
+export const createMeasure = async (measure) => {
+  const tempToRegister = new Temperature({
     measure,
-    day
   });
 
   let currentDay;
 
   try {
-    currentDay = await Day.findById(day);
+    currentDay = await Day.findOne({}, {}, { sort: { "created" : -1 } });
+
+    if (dayjs(currentDay.created).startOf("day") < dayjs(tempToRegister.time).startOf("day")) {
+      currentDay = new Day({});
+      await currentDay.save();
+    }
 
     const session = await mongoose.startSession();
     await session.startTransaction();
 
-    await TempToRegister.save({ session: session });
-    currentDay.temperatures.push(TempToRegister);
+    await tempToRegister.save({ session: session });
+    currentDay.temperatures.push(tempToRegister);
 
     await currentDay.save({ session: session });
     await session.commitTransaction();
-
-    res.send(TempToRegister);
-    next();
   } catch (error) {
     return console.log(error);
   }
