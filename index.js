@@ -37,8 +37,9 @@ const startServer = async () => {
         app.listen(5000, () => {
             console.log("AlleSys: Fetch - DB Connected and Listening on Port 5000");
         });
-    } catch (e) {
+    } catch (error) {
         console.log("AlleSys: Error - Couldnt connect to the DB");
+        console.log(error);
     }
 };
 
