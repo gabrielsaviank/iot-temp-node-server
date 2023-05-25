@@ -16,7 +16,7 @@ export const readWriteIotTemperature = () => {
                 await createMeasure(payload);
             });
         }, 5000);
-    }catch (error) {
+    } catch (error) {
         console.log(`Thema kann nicht abonniert werden ${topic}` + error);
         blink(0);
     }
