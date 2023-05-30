@@ -17,6 +17,7 @@ const char* mqtt_server = "91.121.93.94";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
 
@@ -57,13 +58,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else {
     digitalWrite(BUILTIN_LED, HIGH);
   }
-
 }
 
 void reconnect() {
   while (!client.connected()) {
     Serial.print("AlleSys - Attempting MQTT connection...");
-    String clientId = "AlleSysMqttClient";
+    String clientId = mqtt_server;
     clientId += String(random(0xffff), HEX);
     Serial.println(clientId += String(random(0xffff), HEX));
     if (client.connect(clientId.c_str())) {
@@ -95,10 +95,10 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   }
+  client.loop();
 
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
-
 
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
@@ -110,6 +110,5 @@ void loop() {
       Serial.println(tempStr);
       client.publish("temp", tempStr);
     }
-    client.loop();
   }
 }
