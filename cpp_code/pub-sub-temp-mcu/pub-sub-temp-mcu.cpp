@@ -17,7 +17,6 @@ const char* mqtt_server = "91.121.93.94";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
 
@@ -60,7 +59,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 
 }
-
 
 void reconnect() {
   while (!client.connected()) {
