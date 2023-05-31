@@ -1,11 +1,13 @@
-/* 
-  Mqtt Temperature 
+/*
+  Mqtt Temperature
   Gabriel Savian Zardo
 */
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <chrono>
+#include <thread>
 
 const int oneWireBus = 4;
 const char* ssid = "Gabriel";
@@ -14,7 +16,6 @@ const char* mqtt_server = "91.121.93.94";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
-
 
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
@@ -50,24 +51,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  // This is to test MQTT stuff to see if its working must message from the client
   if ((char)payload[0] == '1') {
     digitalWrite(BUILTIN_LED, LOW);
   } else {
     digitalWrite(BUILTIN_LED, HIGH);
   }
-
 }
+
 
 void reconnect() {
   while (!client.connected()) {
     Serial.print("AlleSys - Attempting MQTT connection...");
-    String clientId = "AlleSysMqttClient";
+    String clientId = mqtt_server;
     clientId += String(random(0xffff), HEX);
+    Serial.println(clientId += String(random(0xffff), HEX));
     if (client.connect(clientId.c_str())) {
       Serial.println("AlleSys - connected");
-
-      client.subscribe("device/led");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -88,22 +87,27 @@ void setup() {
   client.setCallback(callback);
 }
 
+unsigned long previousMillis = 0;
+const unsigned long interval = 900000;
+
 void loop() {
   if (!client.connected()) {
     reconnect();
   }
+  client.loop();
 
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
 
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
 
-  if(!isnan(temperatureC)){
-    char tempStr[10];
-    dtostrf(temperatureC, 6, 2, tempStr);
-    Serial.println(tempStr);
-    client.publish("temp", tempStr);
+    if (!isnan(temperatureC)) {
+      char tempStr[10];
+      dtostrf(temperatureC, 6, 2, tempStr);
+      Serial.println(tempStr);
+      client.publish("temp", tempStr);
+    }
   }
-
-  delay(900000);
-  client.loop();
 }
