@@ -17,7 +17,6 @@ const char* mqtt_server = "91.121.93.94";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
 
@@ -52,13 +51,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  // This is to test MQTT stuff to see if its working must message from the client
   if ((char)payload[0] == '1') {
     digitalWrite(BUILTIN_LED, LOW);
   } else {
     digitalWrite(BUILTIN_LED, HIGH);
   }
 }
+
 
 void reconnect() {
   while (!client.connected()) {
