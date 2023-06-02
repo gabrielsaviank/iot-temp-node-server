@@ -12,10 +12,11 @@
 const int oneWireBus = 4;
 const char* ssid = "Gabriel";
 const char* password = "7758773S";
-const char* mqtt_server = "91.121.93.94";
+const char* mqttServer = "91.121.93.94";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
 
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
@@ -34,7 +35,7 @@ void setup_wifi() {
     Serial.print(".");
   }
 
-  randomSeed(micros());
+//  randomSeed(micros());
 
   Serial.println("");
   Serial.println("WiFi connected");
@@ -51,6 +52,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
+  // This is to test MQTT stuff to see if its working must message from the client
   if ((char)payload[0] == '1') {
     digitalWrite(BUILTIN_LED, LOW);
   } else {
@@ -62,7 +64,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("AlleSys - Attempting MQTT connection...");
-    String clientId = mqtt_server;
+    String clientId = mqttServer;
     clientId += String(random(0xffff), HEX);
     Serial.println(clientId += String(random(0xffff), HEX));
     if (client.connect(clientId.c_str())) {
@@ -83,12 +85,13 @@ void setup() {
   setup_wifi();
   sensors.begin();
 
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqttServer, 1883);
   client.setCallback(callback);
 }
 
 unsigned long previousMillis = 0;
 const unsigned long interval = 900000;
+// const unsigned long interval = 60000;
 
 void loop() {
   if (!client.connected()) {
@@ -99,6 +102,7 @@ void loop() {
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
 
+
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
@@ -107,7 +111,7 @@ void loop() {
       char tempStr[10];
       dtostrf(temperatureC, 6, 2, tempStr);
       Serial.println(tempStr);
-      client.publish("temp", tempStr);
+      client.publish("currentTemperature", tempStr);
     }
   }
 }

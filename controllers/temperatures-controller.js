@@ -22,6 +22,7 @@ export const createMeasure = async (measure) => {
 
     if (dayjs(currentDay.created).startOf("day") < dayjs(tempToRegister.time).startOf("day")) {
       currentDay = new Day({});
+
       await currentDay.save();
     }
 
