@@ -31,7 +31,7 @@ const startServer = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
-        await connectAndSubscribeToIot("temp");
+        await connectAndSubscribeToIot("currentTemperature");
         readWriteIotTemperature();
 
         app.listen(5000, () => {
