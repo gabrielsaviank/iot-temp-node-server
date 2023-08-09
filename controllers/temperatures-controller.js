@@ -38,3 +38,12 @@ export const createMeasure = async (measure) => {
     return console.log(error);
   }
 };
+
+export const getMeasures = async(req, res) => {
+    try{
+        const measuresData = await Temperature.find();
+        res.send(measuresData);
+    }catch (error) {
+        console.log(error);
+    }
+};
