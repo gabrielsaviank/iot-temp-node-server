@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import { createMeasure } from "../controllers/temperatures-controller.js";
+import { createMeasure, getMeasures } from "../controllers/temperatures-controller.js";
 
 const router = Router();
 
+router.get("/", getMeasures);
 router.post("/", createMeasure);
 
 export const temperatureRoutes = router;

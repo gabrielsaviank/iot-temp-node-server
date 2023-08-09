@@ -18,6 +18,15 @@ export const createDay = async(req, res, next) => {
     }
 };
 
+export const getDays = async (req, res) => {
+    try {
+        const data = await Day.find();
+        res.send(data);
+    } catch (error){
+        console.log(error);
+    }
+};
+
 export const getDay = async(req, res) => {
     const dayId = req.params.id;
 
