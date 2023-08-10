@@ -4,39 +4,38 @@ import dayjs from "dayjs";
 import { Temperature } from "../models/Temperature.js";
 import { Day } from "../models/Day.js";
 
-// This is for testing purposes
+
 export const createMeasure = async (measure) => {
-  const tempToRegister = new Temperature({
-    measure,
-  });
+    const tempToRegister = new Temperature({
+        measure,
+    });
 
-  let currentDay;
-
-  try {
-    currentDay = await Day.findOne({}, {}, { sort: { "created" : -1 } });
-
-   if(currentDay === null) {
-     currentDay = new Day({});
-     await currentDay.save();
-   }
-
-    if (dayjs(currentDay.created).startOf("day") < dayjs(tempToRegister.time).startOf("day")) {
-      currentDay = new Day({});
-
-      await currentDay.save();
-    }
+    let currentDay;
 
     const session = await mongoose.startSession();
     await session.startTransaction();
+    try {
+        currentDay = await Day.findOne({}, {}, { sort: { "created" : -1 } });
 
-    await tempToRegister.save({ session: session });
-    currentDay.temperatures.push(tempToRegister);
+        const currentDate = dayjs();
 
-    await currentDay.save({ session: session });
-    await session.commitTransaction();
-  } catch (error) {
-    return console.log(error);
-  }
+        if (currentDay === null || currentDate.isAfter(currentDay.created, "day")) {
+            currentDay = new Day({});
+            await currentDay.save();
+        }
+
+        await tempToRegister.save({ session });
+
+        currentDay.temperatures.push(tempToRegister);
+
+        await currentDay.save({ session });
+        await session.commitTransaction();
+    } catch (error) {
+        await session.abortTransaction();
+        return console.log(error);
+    } finally {
+        await session.endSession();
+    }
 };
 
 export const getMeasures = async(req, res) => {

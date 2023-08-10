@@ -17,7 +17,6 @@ const char* mqttServer = "91.121.93.94";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
 
@@ -79,6 +78,7 @@ void reconnect() {
   }
 }
 
+
 void setup() {
   pinMode(BUILTIN_LED, OUTPUT);
   Serial.begin(115200);
@@ -90,18 +90,18 @@ void setup() {
 }
 
 unsigned long previousMillis = 0;
-const unsigned long interval = 900000;
-// const unsigned long interval = 60000;
+//const unsigned long interval = 900000;
+const unsigned long interval = 60000;
 
 void loop() {
   if (!client.connected()) {
     reconnect();
   }
+
   client.loop();
 
   sensors.requestTemperatures();
   float temperatureC = sensors.getTempCByIndex(0);
-
 
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
@@ -109,7 +109,7 @@ void loop() {
 
     if (!isnan(temperatureC)) {
       char tempStr[10];
-      dtostrf(temperatureC, 6, 2, tempStr);
+      snprintf(tempStr, sizeof(tempStr), "%.2f", temperatureC);
       Serial.println(tempStr);
       client.publish("currentTemperature", tempStr);
     }
