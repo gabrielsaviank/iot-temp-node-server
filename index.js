@@ -8,6 +8,7 @@ import { dayRoutes } from "./routes/day-routes.js";
 import { temperatureRoutes } from "./routes/temperature-routes.js";
 import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
 import { readWriteIotTemperature } from "./controllers/read-write-iot-temperature.js";
+import Model from "./deep_learning/index.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/days", dayRoutes);
 app.use("/temperatures",temperatureRoutes);
 
 const startServer = async () => {
+    // Model();
     try {
         await mongoose.connect(process.env.DB_URI, {
             useNewUrlParser: true,

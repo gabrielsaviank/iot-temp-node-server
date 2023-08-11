@@ -46,3 +46,13 @@ export const getMeasures = async(req, res) => {
         console.log(error);
     }
 };
+
+export const getLastDayTemps = async() => {
+    try {
+        const temperatures = await Temperature.find();
+        // const temperatures = await Temperature.find().sort({ createdAt: -1 }).limit(10);
+        return temperatures.map(temperature => parseFloat(temperature.measure));
+    } catch (error) {
+        console.log(error);
+    }
+};

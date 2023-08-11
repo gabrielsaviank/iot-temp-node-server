@@ -9,6 +9,7 @@
     "start-server": "nodemon index.js"
   },
   "dependencies": {
+    "@tensorflow/tfjs-node": "^4.10.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dayjs": "^1.11.7",
