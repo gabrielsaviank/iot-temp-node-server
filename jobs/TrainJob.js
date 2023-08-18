@@ -5,7 +5,7 @@ import Model from "../deep-learning/index.js";
 export const TrainJob = () => {
     return cron.schedule("* * * * *", () => {
         Model().then(() => {
-            console.log("AlleSys - Machine Learning Job is running");
+            console.log("AlleSys - Machine Learning Job ran successfully");
         });
     }).start();
 };

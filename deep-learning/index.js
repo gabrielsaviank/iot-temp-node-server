@@ -34,7 +34,7 @@ const Model = async () => {
         const predictions = model.predict(inputTensor);
 
         const predictedValues = await predictions.array();
-        console.log("AlleSys - Predicted Temperatures ", predictedValues);
+        console.log("AlleSys - Predicted Temperatures ", predictedValues[0]);
     } catch (error) {
       console.log(error);
     }
