@@ -6,9 +6,10 @@ import { config } from "dotenv";
 
 import { dayRoutes } from "./routes/day-routes.js";
 import { temperatureRoutes } from "./routes/temperature-routes.js";
+import { predictionRoutes } from "./routes/predictions-routes.js";
 import { connectAndSubscribeToIot } from "./controllers/connect-and-subscribe-to-iot.js";
 import { readWriteIotTemperature } from "./controllers/read-write-iot-temperature.js";
-import Model from "./deep_learning/index.js";
+import { TrainJob } from "./jobs/TrainJob.js";
 
 const app = express();
 
@@ -25,9 +26,10 @@ app.use(bodyParser.json());
 
 app.use("/days", dayRoutes);
 app.use("/temperatures",temperatureRoutes);
+app.use("/prediction", predictionRoutes);
 
 const startServer = async () => {
-    // Model();
+    TrainJob();
     try {
         await mongoose.connect(process.env.DB_URI, {
             useNewUrlParser: true,

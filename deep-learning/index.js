@@ -1,6 +1,7 @@
 import tf from "@tensorflow/tfjs-node";
 
 import { getLastDayTemps } from "../controllers/temperatures-controller.js";
+import { swapPrediction } from "../controllers/predictions-controller.js";
 
 
 const Model = async () => {
@@ -34,7 +35,8 @@ const Model = async () => {
         const predictions = model.predict(inputTensor);
 
         const predictedValues = await predictions.array();
-        console.log("AlleSys - Predicted Temperatures ", predictedValues);
+        await swapPrediction(predictedValues[0]);
+        // console.log("AlleSys - Predicted Temperatures ", predictedValues[0]);
     } catch (error) {
       console.log(error);
     }
