@@ -20,10 +20,16 @@ export const swapPrediction = async(predicted) => {
 
         await lastPrediction.save();
     } catch (error){
-        console.log("Failed to save prediction", error);
+        console.log("AlleSys - Failed to save prediction ", error);
     }
 };
 
 export const getPrediction = async(req, res, next) => {
+    try{
+        const prediction = await Prediction.find();
 
+        res.send(prediction);
+    } catch (error) {
+        console.log("AlleSys - Error ", error);
+    }
 };
