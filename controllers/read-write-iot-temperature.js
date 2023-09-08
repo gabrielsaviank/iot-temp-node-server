@@ -12,6 +12,8 @@ export const readWriteIotTemperature = () => {
         ) => {
             const payload = String.fromCharCode.apply(null, packet.payload);
 
+            console.log(payload);
+
             await createMeasure(payload);
         });
     } catch (error) {
