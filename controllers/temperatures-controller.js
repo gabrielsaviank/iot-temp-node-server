@@ -1,38 +1,39 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import dayjs from "dayjs";
 
 import { Temperature } from "../models/Temperature.js";
 import { Day } from "../models/Day.js";
 
 export const createMeasure = async (measure) => {
-    let currentDay;
+    let mostRecentDate;
 
     const session = await mongoose.startSession();
     await session.startTransaction();
+
     try {
-        currentDay = await Day.findOne({}, {}, { sort: { "created" : -1 } });
+        mostRecentDate = await Day.findOne({}, {}, { sort: { "created" : -1 } });
+        const convertMostRecentDate = dayjs(mostRecentDate.created, "DD-MM-YYYY");
+        const currentDay = dayjs().format("DD-MM-YYYY");
 
-        const currentDate = dayjs();
-
-        if (currentDay === null || currentDate.isAfter(currentDay.created, "day")) {
-            currentDay = new Day({});
-            await currentDay.save();
+        if(!mostRecentDate || convertMostRecentDate.isAfter(currentDay, "day")){
+            mostRecentDate = new Day({});
+            await mostRecentDate.save();
         }
 
         const tempToRegister = new Temperature({
-            measure,
-            day: currentDay._id,
+            measure: measure,
+            day: mostRecentDate._id,
         });
 
         await tempToRegister.save({ session });
 
-        currentDay.temperatures.push(tempToRegister);
+        mostRecentDate.temperatures.push(tempToRegister);
 
-        await currentDay.save({ session });
+        await mostRecentDate.save({ session });
         await session.commitTransaction();
-    } catch (error) {
+    } catch (exception) {
         await session.abortTransaction();
-        return console.log(error);
+        return console.log(exception);
     } finally {
         await session.endSession();
     }

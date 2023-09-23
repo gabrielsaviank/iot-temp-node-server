@@ -30,6 +30,7 @@ app.use("/prediction", predictionRoutes);
 
 const startServer = async () => {
     TrainJob();
+
     try {
         await mongoose.connect(process.env.DB_URI, {
             useNewUrlParser: true,
