@@ -2,8 +2,8 @@ import mongoose, { Schema, model } from "mongoose";
 
 const daySchema = new Schema({
     created: {
-        type: Number,
-        default: Date.now(),
+        type: String,
+        default: Date(),
         required: true
     },
     temperatures: [{

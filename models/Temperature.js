@@ -8,8 +8,8 @@ const temperatureSchema = new Schema({
     },
     measure: { type: String, required: true },
     time: {
-        type: Number,
-        default: Date.now,
+        type: String,
+        default: Date(),
         required: false
     },
 });

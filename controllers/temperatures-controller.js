@@ -12,10 +12,16 @@ export const createMeasure = async (measure) => {
 
     try {
         mostRecentDate = await Day.findOne({}, {}, { sort: { "created" : -1 } });
-        const convertMostRecentDate = dayjs(mostRecentDate.created, "DD-MM-YYYY");
-        const currentDay = dayjs().format("DD-MM-YYYY");
 
-        if(!mostRecentDate || convertMostRecentDate.isAfter(currentDay, "day")){
+        const mostRecentDay = dayjs(mostRecentDate.created);
+        const currentDay = dayjs();
+
+        if(!mostRecentDate) {
+            mostRecentDate = new Day({});
+            await mostRecentDate.save();
+        }
+
+        if(currentDay.isAfter(mostRecentDay, "day")){
             mostRecentDate = new Day({});
             await mostRecentDate.save();
         }
