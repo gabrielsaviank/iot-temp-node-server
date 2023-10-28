@@ -13,15 +13,14 @@ export const createMeasure = async (measure) => {
     try {
         mostRecentDate = await Day.findOne({}, {}, { sort: { "created" : -1 } });
 
-        const mostRecentDay = dayjs(mostRecentDate.created);
+        const mostRecentDay = mostRecentDate && mostRecentDate.created ? dayjs(mostRecentDate.created) : dayjs();
+
         const currentDay = dayjs();
 
-        if(!mostRecentDate) {
+        if (!mostRecentDate) {
             mostRecentDate = new Day({});
             await mostRecentDate.save();
-        }
-
-        if(currentDay.isAfter(mostRecentDay, "day")){
+        } else if (currentDay.isAfter(mostRecentDay, "day")) {
             mostRecentDate = new Day({});
             await mostRecentDate.save();
         }
