@@ -1,12 +1,11 @@
 import mqtt from "mqtt";
 import { blink } from "../helpers/Blinking.js";
 
-// spater tauschen sie diese gegen aus .dotenv
 export const alleSysIotClient = mqtt.connect("mqtt://91.121.93.94", {});
 
 export const connectAndSubscribeToIot = async (topic) => {
     alleSysIotClient.on("connect", () => {
-        console.log("AlleSys Verbunden mit MQTT!");
+        console.log("AlleSys Connected to the MQTT!");
         blink(1);
     });
 
@@ -19,15 +18,15 @@ export const connectAndSubscribeToIot = async (topic) => {
     });
 
     alleSysIotClient.on("reconnect", () => {
-        console.log("AlleSys MQTT stellt die Verbindung wieder her");
+        console.log("AlleSys MQTT disconnected, reconnecting...");
     });
 
     alleSysIotClient.subscribe(topic, (err) => {
         if (err) {
-            console.log(`Thema kann nicht abonniert werden ${topic}` + err);
+            console.log(`AlleSys Couldn't subscribe to the topic:  ${topic}` + err);
             blink(0);
         } else {
-            console.log(`AlleSys - Abonniert zu ${topic}, fange an themen zu lesen...`);
+            console.log(`AlleSys - Subscribed to the topic ${topic}...`);
             blink(1);
         }
     });
