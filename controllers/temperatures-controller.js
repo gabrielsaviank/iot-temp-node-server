@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Temperature } from "../models/Temperature.js";
 import { Day } from "../models/Day.js";
 
+
 export const createMeasure = async (measure) => {
     let lastDateRecord;
 
@@ -60,7 +61,7 @@ export const createMeasure = async (measure) => {
         //
         // const currentDay = dayjs();
 
-        
+
         //
         // if (!mostRecentDate) {
         //     mostRecentDate = new Day({});
@@ -118,5 +119,66 @@ export const fetchLastDayTemps = async(req, res) => {
         res.send(dailyMeasures);
     } catch (error) {
         console.log(error);
+    }
+};
+
+// THIS CONTROLLER IS FOR TESTING;
+export const createManuallyMeasures = async(req, res) => {
+    const { measure } = req.body;
+
+    let lastDateRecord;
+
+    const session = await mongoose.startSession();
+    await session.startTransaction();
+
+    try {
+        lastDateRecord = await Day.findOne({}, {}, { sort: { "created" : -1 } });
+        const actualDate = await dayjs();
+
+        if(!lastDateRecord){
+            let createNewDay = new Day({});
+
+            let tempToRegister = new Temperature({
+                measure: measure,
+                day: createNewDay._id
+            });
+
+            await tempToRegister.save({ session });
+
+            createNewDay.temperatures.push(tempToRegister);
+            await createNewDay.save({ session });
+            await session.commitTransaction();
+
+        } else if(actualDate.isAfter(lastDateRecord, "day")) {
+            let createNewDay = new Day({});
+
+            let tempToRegister = new Temperature({
+                measure: measure,
+                day: createNewDay._id
+            });
+
+            await tempToRegister.save({ session });
+
+            createNewDay.temperatures.push(tempToRegister);
+            await createNewDay.save({ session });
+            await session.commitTransaction();
+        } else {
+            let tempToRegister = new Temperature({
+                measure: measure,
+                day: lastDateRecord._id
+            });
+
+            await tempToRegister.save({ session });
+            lastDateRecord.temperatures.push(tempToRegister);
+
+            await lastDateRecord.save({ session });
+            await session.commitTransaction();
+        }
+    } catch (exception) {
+        await session.abortTransaction();
+        return console.log(exception);
+    } finally {
+        res.send(measure);
+        await session.endSession();
     }
 };
